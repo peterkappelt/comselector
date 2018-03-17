@@ -21,5 +21,9 @@ namespace comselector {
 		private void buttonClose_Click(object sender, EventArgs e) {
 			this.Close();
 		}
+
+		private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			System.Diagnostics.Process.Start(((LinkLabel)sender).Text);
+		}
 	}
 }
