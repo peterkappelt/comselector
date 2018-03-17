@@ -29,6 +29,7 @@
 			this.buttonRefreshPorts = new System.Windows.Forms.Button();
 			this.buttonSelect = new System.Windows.Forms.Button();
 			this.buttonInfo = new System.Windows.Forms.Button();
+			this.checkBoxRememberPort = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// labelUserMsg
@@ -82,6 +83,17 @@
 			this.buttonInfo.TabIndex = 4;
 			this.buttonInfo.Text = "About";
 			this.buttonInfo.UseVisualStyleBackColor = true;
+			this.buttonInfo.Click += new System.EventHandler(this.buttonInfo_Click);
+			// 
+			// checkBoxRememberPort
+			// 
+			this.checkBoxRememberPort.AutoSize = true;
+			this.checkBoxRememberPort.Location = new System.Drawing.Point(62, 56);
+			this.checkBoxRememberPort.Name = "checkBoxRememberPort";
+			this.checkBoxRememberPort.Size = new System.Drawing.Size(124, 17);
+			this.checkBoxRememberPort.TabIndex = 5;
+			this.checkBoxRememberPort.Text = "Remember Selection";
+			this.checkBoxRememberPort.UseVisualStyleBackColor = true;
 			// 
 			// mainform
 			// 
@@ -89,6 +101,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(439, 87);
 			this.ControlBox = false;
+			this.Controls.Add(this.checkBoxRememberPort);
 			this.Controls.Add(this.buttonInfo);
 			this.Controls.Add(this.buttonSelect);
 			this.Controls.Add(this.buttonRefreshPorts);
@@ -96,7 +109,7 @@
 			this.Controls.Add(this.labelUserMsg);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "mainform";
-			this.Text = "Kappelt Comselector";
+			this.Text = "kComselector";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainform_FormClosing);
 			this.Load += new System.EventHandler(this.mainform_Load);
 			this.ResumeLayout(false);
@@ -111,6 +124,7 @@
 		private System.Windows.Forms.Button buttonRefreshPorts;
 		private System.Windows.Forms.Button buttonSelect;
 		private System.Windows.Forms.Button buttonInfo;
+		private System.Windows.Forms.CheckBox checkBoxRememberPort;
 	}
 }
 

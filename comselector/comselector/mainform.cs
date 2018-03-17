@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace comselector {
 	public partial class mainform : Form {
-		string instanceid = "";
+		string userappid = "";
 		string selectedPort = "";
 
 		public mainform() {
@@ -21,27 +21,24 @@ namespace comselector {
 
 		private void refreshPorts() {
 			comboBoxPorts.Items.Clear();
-
+			string[] apps = LastUserPort.getAllAppids();
 			string[] ports = SerialPort.GetPortNames();
 			if(ports.Length == 0) {
 				MessageBox.Show("No COM-Ports are available on this system!");
 				selectPort("COMX");
 			}
 
-			string previousPort = LastUserPort.getLastPortByInstanceID(instanceid);
-
-			ManagementObjectCollection ManObjReturn;
-			ManagementObjectSearcher ManObjSearch;
-			ManObjSearch = new ManagementObjectSearcher("Select * from Win32_SerialPort");
-			ManObjReturn = ManObjSearch.Get();
+			UserPortConf previousPort = LastUserPort.getLastPortByUserappID(userappid);
+			checkBoxRememberPort.Checked = previousPort.rememberPermanent;
 
 			//set to true if we've found a port that the user has selected before
 			bool foundPreviousPort = false;
+			foreach (string port in ports) {
+				PortInfo portinfo = PortInfo.getPortInfoByPortname(port);
 
-			foreach (ManagementObject ManObj in ManObjReturn) {
-				ComboBoxPortItem item = new ComboBoxPortItem(ManObj["DeviceID"].ToString(), ManObj["DeviceID"].ToString() + ": " + ManObj["Caption"].ToString());
+				ComboBoxPortItem item = new ComboBoxPortItem(port, portinfo.beautifulFormatted());
 				comboBoxPorts.Items.Add(item);
-				if(ManObj["DeviceID"].ToString() == previousPort) {
+				if(port == previousPort.portname) {
 					comboBoxPorts.SelectedItem = item;
 					foundPreviousPort = true;
 				}
@@ -50,14 +47,28 @@ namespace comselector {
 			if((comboBoxPorts.Items.Count > 0) && !foundPreviousPort) {
 				comboBoxPorts.SelectedIndex = 0;
 			}
+
+			//user checked to use this port permanently
+			if(previousPort.rememberPermanent && foundPreviousPort) {
+				selectPort(previousPort.portname);
+			}else if(previousPort.rememberPermanent && !foundPreviousPort) {
+				checkBoxRememberPort.Checked = false;
+				previousPort.rememberPermanent = false;
+				LastUserPort.setLastPortByUserappID(userappid, previousPort);
+				MessageBox.Show("Previously selected port is not available anymore!");
+			}
 		}
 
-		private void selectPort(string port) {
-			selectedPort = port;
-			if(port != "COMX") {
-				LastUserPort.setLastPortByInstanceID(instanceid, port);
+		private void selectPort(string portname) {
+			selectedPort = portname;
+			if(portname != "COMX") {
+				UserPortConf port;
+				port.portname = portname;
+				port.rememberPermanent = checkBoxRememberPort.Checked;
+
+				LastUserPort.setLastPortByUserappID(userappid, port);
 			}
-			Console.WriteLine(port);
+			Console.WriteLine(portname);
 			Application.Exit();
 		}
 
@@ -65,7 +76,7 @@ namespace comselector {
 			string[] argv = Environment.GetCommandLineArgs();
 
 			if(argv.Length > 1) {
-				instanceid = argv[1];
+				userappid = argv[1];
 			}
 
 			//dynamically set the title and the message if the window, if specified
@@ -92,6 +103,11 @@ namespace comselector {
 
 		private void buttonSelect_Click(object sender, EventArgs e) {
 			selectPort(((ComboBoxPortItem)comboBoxPorts.SelectedItem).portname);
+		}
+
+		private void buttonInfo_Click(object sender, EventArgs e) {
+			aboutform about = new aboutform();
+			about.ShowDialog();
 		}
 	}
 	public class ComboBoxPortItem {

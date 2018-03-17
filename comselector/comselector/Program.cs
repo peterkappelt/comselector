@@ -14,7 +14,13 @@ namespace comselector {
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new mainform());
+
+			string[] args = Environment.GetCommandLineArgs();
+			if (args.Length > 1) {
+				Application.Run(new mainform());
+			}else {
+				Application.Run(new controlform());
+			}
 		}
 	}
 }
